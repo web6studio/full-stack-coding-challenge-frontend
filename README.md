@@ -1,4 +1,4 @@
-# Frontend Coding Challenge
+# Product Engineer Coding Challenge
 
 Our main goal for this exercise is to get an idea of how you are to work with and how you approach your engineering work. That insight is more important than your actual working solution at the end of this exercise.
 
@@ -15,7 +15,7 @@ You'll be working on a tiny app that looks up airport information. It renders a 
 - **Fix the Bug**: Our CX team has discovered a bug. When they search for airports in `Germany`, they are unable to find `Mannheim` and many other airports. Investigate the issue and add a hotfix. Prioritize unblocking the user.
 - **Improve Search Functionality**: The search feels laggy! Propose and implement a solution to make it more responsive and efficient. Hint: The backend engineers have expressed concerns over the volume of search calls being made.
 - **Optimize and Implement Rendering**: Ensure the app performs well with a large list of airports on mobile devices. Consider small screens, different viewport sizes and touch events. Elaborate on different strategies we could use to render large lists. Let's find a balance between evaluation and shipping, and please implement a solution that you find most feasible within the time frame! Our designer has also given you a reference to work with:
-- ![image](https://user-images.githubusercontent.com/144075/144594282-68de44cd-bef2-4d9d-8c5d-398862cbc964.png)
+![image](https://user-images.githubusercontent.com/144075/144594282-68de44cd-bef2-4d9d-8c5d-398862cbc964.png)
 
 
 ## Considerations:
