@@ -11,7 +11,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200).json(all)
   }
 
-  const response = await searchAirports(search.toString())
+  const response = await searchAirports(search.toString(), 1, 50000)
   const airports = response !== undefined ? response : []
 
   res.status(200).json(airports)

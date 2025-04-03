@@ -9,17 +9,20 @@ export const allAirports = async (): Promise<Airport[]> => {
   return airports
 }
 
+const normalizeString = (str: string): string =>
+  str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
 export const searchAirports = async (
   query: string,
   page: number = 1,
   limit: number = 50
 ): Promise<Airport[]> => {
-  const regex = new RegExp(query, 'i')
+  const regex = new RegExp(normalizeString(query), 'i')
 
   const filteredAirports = airports.filter(
     (airport) =>
       regex.test(airport.iata) ||
-      regex.test(airport.name) ||
+      regex.test(normalizeString(airport.name)) ||
       regex.test(airport.city) ||
       regex.test(airport.country)
   )
