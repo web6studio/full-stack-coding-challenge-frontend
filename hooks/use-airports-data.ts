@@ -60,6 +60,7 @@ export const useAirportsData = <T>(
 
     axios
       .get<T>(path, {
+        params: { page, limit: pageSize },
         signal: controller.signal,
       })
       .then((response) => {
