@@ -1,11 +1,16 @@
 import { NextPage } from 'next'
 import Link from 'next/link'
-import { useState } from 'react'
+import { CSSProperties, useState } from 'react'
+import { FixedSizeList as List } from 'react-window'
+import AutoSizer from 'react-virtualized-auto-sizer'
 
 import Layout from '../components/layout'
 import useApiData from '../hooks/use-api-data'
 import AirportResponse from '../types/airportsResponse'
 import useDebounce from '../hooks/use-debounce'
+
+const PAGE_SIZE = 50000
+const ITEM_HEIGHT = 80
 
 const Page: NextPage = () => {
   const [query, setQuery] = useState('')
@@ -13,9 +18,28 @@ const Page: NextPage = () => {
   const debouncedQuery = useDebounce(query, 300)
   const data = useApiData<AirportResponse>(
     `/api/airports${debouncedQuery ? `?search=${debouncedQuery}` : ''}`,
-    { airports: [], total: 0, page: 1, limit: 50 },
+    { airports: [], total: 0, page: 1, limit: PAGE_SIZE },
     [debouncedQuery]
   )
+
+  const AirportRow = ({ index, style }: { index: number; style: CSSProperties }) => {
+    const airport = data.airports[index]
+
+    return (
+      <div style={style}>
+        <Link
+          className="flex items-center p-5 mt-5 text-gray-800 border border-gray-200 rounded-lg shadow-sm hover:border-blue-600 focus:border-blue-600 focus:ring focus:ring-blue-200 focus:outline-none"
+          href={`/airports/${airport.iata.toLowerCase()}`}
+          key={airport.iata}
+        >
+          <span>
+            {airport.name}, {airport.city}
+          </span>
+          <span className="ml-auto text-gray-500">{airport.country}</span>
+        </Link>
+      </div>
+    )
+  }
 
   return (
     <Layout>
@@ -34,19 +58,19 @@ const Page: NextPage = () => {
         />
       </div>
 
-      <div>
-        {data.airports.map((airport) => (
-          <Link
-            className="flex items-center p-5 mt-5 text-gray-800 border border-gray-200 rounded-lg shadow-sm hover:border-blue-600 focus:border-blue-600 focus:ring focus:ring-blue-200 focus:outline-none"
-            href={`/airports/${airport.iata.toLowerCase()}`}
-            key={airport.iata}
-          >
-            <span>
-              {airport.name}, {airport.city}
-            </span>
-            <span className="ml-auto text-gray-500">{airport.country}</span>
-          </Link>
-        ))}
+      <div style={{ height: 'calc(100vh - 230px)' }}>
+        <AutoSizer>
+          {({ height, width }) => (
+            <List
+              height={height}
+              itemCount={data.airports.length}
+              itemSize={ITEM_HEIGHT}
+              width={width}
+            >
+              {AirportRow}
+            </List>
+          )}
+        </AutoSizer>
       </div>
     </Layout>
   )
