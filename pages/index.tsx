@@ -2,28 +2,35 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import { CSSProperties, useState } from 'react'
 import { FixedSizeList as List } from 'react-window'
+import InfiniteLoader from 'react-window-infinite-loader'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 import Layout from '../components/layout'
-import useApiData from '../hooks/use-api-data'
+import useAirportsData from '../hooks/use-airports-data'
 import AirportResponse from '../types/airportsResponse'
 import useDebounce from '../hooks/use-debounce'
 
-const PAGE_SIZE = 50000
+const PAGE_SIZE = 50
 const ITEM_HEIGHT = 80
 
 const Page: NextPage = () => {
   const [query, setQuery] = useState('')
 
   const debouncedQuery = useDebounce(query, 300)
-  const data = useApiData<AirportResponse>(
+  const { data, isLoading, loadMoreItems, isItemLoaded } = useAirportsData<AirportResponse>(
     `/api/airports${debouncedQuery ? `?search=${debouncedQuery}` : ''}`,
     { airports: [], total: 0, page: 1, limit: PAGE_SIZE },
+    PAGE_SIZE,
     [debouncedQuery]
   )
 
   const AirportRow = ({ index, style }: { index: number; style: CSSProperties }) => {
     const airport = data.airports[index]
+    const isLoaded = isItemLoaded(index)
+
+    if (!isLoaded) {
+      return <div style={style}>Loading...</div>
+    }
 
     return (
       <div style={style}>
@@ -61,14 +68,25 @@ const Page: NextPage = () => {
       <div style={{ height: 'calc(100vh - 230px)' }}>
         <AutoSizer>
           {({ height, width }) => (
-            <List
-              height={height}
-              itemCount={data.airports.length}
-              itemSize={ITEM_HEIGHT}
-              width={width}
+            <InfiniteLoader
+              isItemLoaded={isItemLoaded}
+              itemCount={data.total}
+              loadMoreItems={loadMoreItems}
+              threshold={5}
             >
-              {AirportRow}
-            </List>
+              {({ onItemsRendered, ref }) => (
+                <List
+                  height={height}
+                  itemCount={data.airports.length}
+                  itemSize={ITEM_HEIGHT}
+                  width={width}
+                  onItemsRendered={onItemsRendered}
+                  ref={ref}
+                >
+                  {AirportRow}
+                </List>
+              )}
+            </InfiniteLoader>
           )}
         </AutoSizer>
       </div>
