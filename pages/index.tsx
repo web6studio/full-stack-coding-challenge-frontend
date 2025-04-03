@@ -50,19 +50,22 @@ const Page: NextPage = () => {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-bold">Code Challenge: Airports</h1>
-
-      <h2 className="mt-10 text-xl font-semibold">All Airports</h2>
+      <h1 className="text-2xl font-bold mb-6">Code Challenge: Airports</h1>
 
       <div className="mt-1 relative shadow-sm">
         <input
           type="text"
           name="query"
           id="query"
-          className="focus:ring-blue-600 focus:border-blue-600 block w-full sm:text-sm border-gray-300 text-gray-800 rounded bg-gray-50 p-3"
-          placeholder="Search by name, IATA, city, or country"
+          className="border border-gray-200 focus:ring-blue-600 block w-full sm:text-sm text-gray-800 rounded bg-gray-50 p-3"
+          placeholder="Start typing..."
           onChange={(e) => setQuery(e.target.value)}
         />
+      </div>
+
+      <div className="mt-8 flex items-center">
+        <h2 className="text-xl font-bold">Airports</h2>
+        <span className="text-white rounded-full bg-blue-500 py-0.5 px-2 ml-2">{data.total}</span>
       </div>
 
       <div style={{ height: 'calc(100vh - 230px)' }}>
