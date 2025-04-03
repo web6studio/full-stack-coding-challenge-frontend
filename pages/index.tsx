@@ -5,11 +5,13 @@ import { useState } from 'react'
 import Layout from '../components/layout'
 import useApiData from '../hooks/use-api-data'
 import Airport from '../types/airport'
+import useDebounce from '../hooks/use-debounce'
 
 const Page: NextPage = () => {
-  const [query, setQuery] = useState<string>('')
+  const [query, setQuery] = useState('')
 
-  const airports = useApiData<Airport[]>(`/api/airports/${query}`, [], [query])
+  const debouncedQuery = useDebounce(query, 300)
+  const airports = useApiData<Airport[]>(`/api/airports/${debouncedQuery}`, [], [debouncedQuery])
 
   return (
     <Layout>
@@ -24,7 +26,7 @@ const Page: NextPage = () => {
           id="query"
           className="focus:ring-blue-600 focus:border-blue-600 block w-full sm:text-sm border-gray-300 text-gray-800 rounded bg-gray-50 p-3"
           placeholder="Search by name, IATA, city, or country"
-          onChange={(e) => setQuery(e.target.value)} // TODO: debounce and sanitize input
+          onChange={(e) => setQuery(e.target.value)}
         />
       </div>
 

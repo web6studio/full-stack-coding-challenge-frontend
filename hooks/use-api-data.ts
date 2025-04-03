@@ -5,12 +5,22 @@ export const useApiData = <T>(path: string, defaultValue: any, dependencies = []
   const [data, setData] = useState<T>(defaultValue)
 
   useEffect(() => {
+    const controller = new AbortController()
+
     axios
-      .get<T>(path)
-      .catch((err) => err.response)
+      .get<T>(path, {
+        signal: controller.signal,
+      })
       .then((response) => {
         setData(response.data)
       })
+      .catch((err) => {
+        if (!axios.isCancel(err) && err) {
+          return err.response
+        }
+      })
+
+    return () => controller.abort()
   }, dependencies)
 
   return data
