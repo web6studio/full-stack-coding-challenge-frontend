@@ -4,14 +4,18 @@ import { useState } from 'react'
 
 import Layout from '../components/layout'
 import useApiData from '../hooks/use-api-data'
-import Airport from '../types/airport'
+import AirportResponse from '../types/airportsResponse'
 import useDebounce from '../hooks/use-debounce'
 
 const Page: NextPage = () => {
   const [query, setQuery] = useState('')
 
   const debouncedQuery = useDebounce(query, 300)
-  const airports = useApiData<Airport[]>(`/api/airports/${debouncedQuery}`, [], [debouncedQuery])
+  const data = useApiData<AirportResponse>(
+    `/api/airports${debouncedQuery ? `?search=${debouncedQuery}` : ''}`,
+    { airports: [], total: 0, page: 1, limit: 50 },
+    [debouncedQuery]
+  )
 
   return (
     <Layout>
@@ -31,7 +35,7 @@ const Page: NextPage = () => {
       </div>
 
       <div>
-        {airports.map((airport) => (
+        {data.airports.map((airport) => (
           <Link
             className="flex items-center p-5 mt-5 text-gray-800 border border-gray-200 rounded-lg shadow-sm hover:border-blue-600 focus:border-blue-600 focus:ring focus:ring-blue-200 focus:outline-none"
             href={`/airports/${airport.iata.toLowerCase()}`}

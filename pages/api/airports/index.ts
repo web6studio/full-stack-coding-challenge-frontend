@@ -1,9 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { allAirports } from '../../../models/airport'
+import { searchAirports } from '../../../models/airport'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const airports = await allAirports()
+  const { search = '', limit = '50', page = '1' } = req.query
+  const data = await searchAirports(
+    search.toString(),
+    parseInt(page.toString()),
+    parseInt(limit.toString())
+  )
 
-  res.status(200).json(airports)
+  res.status(200).json(data)
 }
